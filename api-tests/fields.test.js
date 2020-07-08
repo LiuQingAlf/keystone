@@ -10,45 +10,48 @@ describe('Fields', () => {
 
   multiAdapterRunners().map(({ runner, adapterName }) =>
     describe(`${adapterName} adapter`, () => {
-      testModules.map(require).forEach(mod => {
-        const listName = 'test';
-        const keystoneTestWrapper = (testFn = () => {}) =>
-          runner(
-            () => {
-              const createLists = keystone => {
-                // Create a list with all the fields required for testing
-                const fields = mod.getTestFields();
+      testModules
+        .map(require)
+        .filter(({ name }) => true || name === 'Uuid')
+        .forEach(mod => {
+          const listName = 'test';
+          const keystoneTestWrapper = (testFn = () => {}) =>
+            runner(
+              () => {
+                const createLists = keystone => {
+                  // Create a list with all the fields required for testing
+                  const fields = mod.getTestFields();
 
-                keystone.createList(listName, { fields });
-              };
-              return setupServer({ adapterName, createLists });
-            },
-            async ({ keystone, ...rest }) => {
-              // Populate the database before running the tests
-              await keystone.createItems({ [listName]: mod.initItems() });
+                  keystone.createList(listName, { fields });
+                };
+                return setupServer({ adapterName, createLists });
+              },
+              async ({ keystone, ...rest }) => {
+                // Populate the database before running the tests
+                await keystone.createItems({ [listName]: mod.initItems() });
 
-              return testFn({ keystone, listName, adapterName, ...rest });
+                return testFn({ keystone, listName, adapterName, ...rest });
+              }
+            );
+
+          describe(`${mod.name} field`, () => {
+            if (mod.crudTests) {
+              describe(`CRUD operations`, () => {
+                mod.crudTests(keystoneTestWrapper);
+              });
+            } else {
+              test.todo('CRUD operations - tests missing');
             }
-          );
 
-        describe(`${mod.name} field`, () => {
-          if (mod.crudTests) {
-            describe(`CRUD operations`, () => {
-              mod.crudTests(keystoneTestWrapper);
-            });
-          } else {
-            test.todo('CRUD operations - tests missing');
-          }
-
-          if (mod.filterTests) {
-            describe(`Filtering`, () => {
-              mod.filterTests(keystoneTestWrapper);
-            });
-          } else {
-            test.todo('Filtering - tests missing');
-          }
+            if (mod.filterTests) {
+              describe(`Filtering`, () => {
+                mod.filterTests(keystoneTestWrapper);
+              });
+            } else {
+              test.todo('Filtering - tests missing');
+            }
+          });
         });
-      });
     })
   );
 });

@@ -30,6 +30,12 @@ class Field {
     this.getListByKey = getListByKey;
     this.listKey = listKey;
     this.label = label || inflection.humanize(inflection.underscore(path));
+    if (this.config.isUnique && !this._supportsUnique) {
+      throw new Error(
+        `isUnique is not a supported option for field type ${this.constructor.name} (${this.path})`
+      );
+    }
+
     this.adapter = listAdapter.newFieldAdapter(
       fieldAdapterClass,
       this.constructor.name,
@@ -49,6 +55,12 @@ class Field {
       defaultAccess,
       access,
     });
+  }
+
+  // By default we assume that fields support unique.
+  // Fields should override this method if not.
+  get _supportsUnique() {
+    return true;
   }
 
   parseFieldAccess(args) {

@@ -12,5 +12,6 @@ export default {
   adapters: {
     mongoose: MongoFileInterface,
     knex: KnexFileInterface,
+    prisma: 'FIXME',
   },
 };

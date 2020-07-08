@@ -1,4 +1,9 @@
-import { Text, MongoTextInterface, KnexTextInterface } from '../Text/Implementation';
+import {
+  Text,
+  MongoTextInterface,
+  KnexTextInterface,
+  PrismaTextInterface,
+} from '../Text/Implementation';
 import { importView } from '@keystonejs/build-field-types';
 
 export default {
@@ -13,5 +18,6 @@ export default {
   adapters: {
     mongoose: MongoTextInterface,
     knex: KnexTextInterface,
+    prisma: PrismaTextInterface,
   },
 };

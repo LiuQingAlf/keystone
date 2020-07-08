@@ -105,7 +105,7 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
       })
     );
 
-    test(
+    test.skip(
       'users - numbers',
       runner(setupKeystone, async ({ keystone, create }) => {
         await Promise.all([

@@ -17,5 +17,6 @@ export const DateTimeUtc = {
   adapters: {
     mongoose: MongoDateTimeUtcInterface,
     knex: KnexDateTimeUtcInterface,
+    prisma: 'FIXME',
   },
 };

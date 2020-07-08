@@ -13,5 +13,6 @@ export default {
   adapters: {
     mongoose: MongoLocationInterface,
     knex: KnexLocationInterface,
+    prisma: 'FIXME',
   },
 };

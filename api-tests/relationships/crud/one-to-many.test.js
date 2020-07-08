@@ -186,7 +186,7 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
             );
           })
         );
-        test(
+        test.skip(
           '_none',
           runner(setupKeystone, async ({ keystone }) => {
             await createReadData(keystone);
@@ -207,7 +207,7 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
             );
           })
         );
-        test(
+        test.skip(
           '_every',
           runner(setupKeystone, async ({ keystone }) => {
             await createReadData(keystone);

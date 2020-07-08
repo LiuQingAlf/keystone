@@ -13,6 +13,7 @@ export default {
   adapters: {
     mongoose: MongoUnsplashInterface,
     knex: KnexUnsplashInterface,
+    prisma: 'FIXME',
   },
   blocks: {
     unsplashImage: UnsplashBlock,

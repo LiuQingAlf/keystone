@@ -61,8 +61,8 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
           });
 
           // Avoid false-positives by checking the database directly
-          expect(createEvent).toHaveProperty('group');
-          expect(createEvent.group.toString()).toBe(createGroup.id);
+          expect(createEvent).toHaveProperty('groupId');
+          expect(createEvent.groupId.toString()).toBe(createGroup.id);
 
           // Update the item and link the relationship field
           const { data, errors } = await graphqlRequest({
@@ -95,7 +95,7 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
           // Avoid false-positives by checking the database directly
           const eventData = await findById('Event', createEvent.id);
 
-          expect(eventData).toHaveProperty('group', null);
+          expect(eventData).toHaveProperty('groupId', null);
         })
       );
 
@@ -227,8 +227,8 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
             });
 
             // Avoid false-positives by checking the database directly
-            expect(createEvent).toHaveProperty('group');
-            expect(createEvent.group.toString()).toBe(createGroup.id);
+            expect(createEvent).toHaveProperty('groupId');
+            expect(createEvent.groupId.toString()).toBe(createGroup.id);
 
             // Update the item and link the relationship field
             const { errors } = await networkedGraphqlRequest({
@@ -251,8 +251,8 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
             // Avoid false-positives by checking the database directly
             const eventData = await findById('EventToGroupNoRead', createEvent.id);
 
-            expect(eventData).toHaveProperty('group');
-            expect(eventData.group).toBe(null);
+            expect(eventData).toHaveProperty('groupId');
+            expect(eventData.groupId).toBe(null);
           })
         );
 

@@ -1,5 +1,10 @@
 import { importView } from '@keystonejs/build-field-types';
-import { Checkbox, MongoCheckboxInterface, KnexCheckboxInterface } from './Implementation';
+import {
+  Checkbox,
+  MongoCheckboxInterface,
+  KnexCheckboxInterface,
+  PrismaCheckboxInterface,
+} from './Implementation';
 
 export default {
   type: 'Checkbox',
@@ -13,5 +18,6 @@ export default {
   adapters: {
     mongoose: MongoCheckboxInterface,
     knex: KnexCheckboxInterface,
+    prisma: PrismaCheckboxInterface,
   },
 };

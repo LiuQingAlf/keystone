@@ -14,6 +14,7 @@ export default {
   adapters: {
     mongoose: MongoOEmbedInterface,
     knex: KnexOEmbedInterface,
+    prisma: 'FIXME',
   },
   blocks: {
     oEmbed: OEmbedBlock,

@@ -4,6 +4,7 @@ import {
   Text,
   MongoTextInterface as MongoSlugInterface,
   KnexTextInterface as KnexSlugInterface,
+  PrismaTextInterface as PrismaSlugInterface,
 } from '../Text/Implementation';
 
 const MAX_UNIQUE_ATTEMPTS = 100;
@@ -268,4 +269,4 @@ export class SlugImplementation extends Text {
   }
 }
 
-export { MongoSlugInterface, KnexSlugInterface };
+export { MongoSlugInterface, KnexSlugInterface, PrismaSlugInterface };

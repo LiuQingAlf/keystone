@@ -2,6 +2,7 @@ import inflection from 'inflection';
 import { Implementation } from '../../Implementation';
 import { MongooseFieldAdapter } from '@keystonejs/adapter-mongoose';
 import { KnexFieldAdapter } from '@keystonejs/adapter-knex';
+import { PrismaFieldAdapter } from '@keystonejs/adapter-prisma';
 
 function initOptions(options) {
   let optionsArray = options;
@@ -163,5 +164,35 @@ export class KnexSelectInterface extends CommonSelectInterface(KnexFieldAdapter)
     else if (this.isIndexed) column.index();
     if (this.isNotNullable) column.notNullable();
     if (typeof this.defaultTo !== 'undefined') column.defaultTo(this.defaultTo);
+  }
+}
+
+export class PrismaSelectInterface extends CommonSelectInterface(PrismaFieldAdapter) {
+  constructor() {
+    super(...arguments);
+    this.isUnique = !!this.config.isUnique;
+    this.isIndexed = !!this.config.isIndexed && !this.config.isUnique;
+  }
+
+  getPrismaEnums() {
+    if (this.field.dataType === 'enum') {
+      return [
+        `enum ${this.field.listKey}${inflection.classify(this.path)}Enum {
+      ${this.field.options.map(i => i.value).join('\n        ')}
+    }`,
+      ];
+    } else return [];
+  }
+
+  getPrismaSchema() {
+    if (this.field.dataType === 'enum') {
+      return [
+        this._schemaField({ type: `${this.field.listKey}${inflection.classify(this.path)}Enum` }),
+      ];
+    } else if (this.field.dataType === 'integer') {
+      return [this._schemaField({ type: 'Int' })];
+    } else {
+      return [this._schemaField({ type: 'String' })];
+    }
   }
 }

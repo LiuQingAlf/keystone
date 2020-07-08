@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { MongooseFieldAdapter } from '@keystonejs/adapter-mongoose';
 import { KnexFieldAdapter } from '@keystonejs/adapter-knex';
+import { PrismaFieldAdapter } from '@keystonejs/adapter-prisma';
 
 const {
   Schema: {
@@ -126,11 +127,22 @@ export class Relationship extends Implementation {
     } else {
       return {
         [this.path]: (item, _, context, info) => {
+          // FIXME: This logic needs to get shifted into the list adapter I think.
+          // Not sure how though...
           // No ID set, so we return null for the value
-          if (!item[this.path]) {
+          const foo = item[`${this.path}Id`] ? `${this.path}Id` : this.path;
+          if (!item[foo]) {
             return null;
           }
-          const filteredQueryArgs = { where: { id: item[this.path].toString() } };
+          let id;
+          if (Array.isArray(item[foo])) {
+            id = item[foo][0];
+          } else if (typeof item[foo] === 'object') {
+            id = item[foo].id.toString();
+          } else {
+            id = item[foo].toString();
+          }
+          const filteredQueryArgs = { where: { id: id.toString() } };
           // We do a full query to ensure things like access control are applied
           return refList
             .listQuery(filteredQueryArgs, context, refList.gqlNames.listQueryName, info)
@@ -209,7 +221,19 @@ export class Relationship extends Implementation {
         : [];
       currentValue = currentValue.map(({ id }) => id.toString());
     } else {
-      currentValue = item && item[this.path];
+      // console.log({ item })
+      // console.log(this.path);
+      const foo = item && item[`${this.path}Id`] ? `${this.path}Id` : this.path;
+      // console.log(foo);
+      let id;
+      if (item && Array.isArray(item[foo])) {
+        id = item[foo][0];
+      } else if (item && typeof item[foo] === 'object') {
+        id = item[foo] && item[foo].id;
+      } else {
+        id = item && item[foo];
+      }
+      currentValue = id;
       currentValue = currentValue && currentValue.toString();
     }
 
@@ -400,6 +424,32 @@ export class KnexRelationshipInterface extends KnexFieldAdapter {
     return {
       [`${this.path}_is_null`]: value => b =>
         value ? b.whereNull(dbPath) : b.whereNotNull(dbPath),
+    };
+  }
+}
+
+export class PrismaRelationshipInterface extends PrismaFieldAdapter {
+  constructor() {
+    super(...arguments);
+    this.isRelationship = true;
+
+    // Default isIndexed to true if it's not explicitly provided
+    // Mutually exclusive with isUnique
+    this.isUnique = typeof this.config.isUnique === 'undefined' ? false : !!this.config.isUnique;
+    this.isIndexed =
+      typeof this.config.isIndexed === 'undefined'
+        ? !this.config.isUnique
+        : !!this.config.isIndexed;
+
+    // JM: It bugs me this is duplicated in the implementation but initialisation order makes it hard to avoid
+    const [refListKey, refFieldPath] = this.config.ref.split('.');
+    this.refListKey = refListKey;
+    this.refFieldPath = refFieldPath;
+  }
+
+  getQueryConditions(dbPath) {
+    return {
+      [`${this.path}_is_null`]: value => (value ? { [dbPath]: null } : { NOT: { [dbPath]: null } }),
     };
   }
 }

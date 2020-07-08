@@ -183,8 +183,8 @@ multiAdapterRunners().map(({ runner, adapterName }) =>
               user.posts = [];
             }
             for (const post of posts) {
-              for (const authorId of post.author) {
-                users.find(u => String(u.id) === String(authorId)).posts.push(post.id);
+              for (const author of post.author) {
+                users.find(u => String(u.id) === String(author.id)).posts.push(post.id);
               }
             }
             for (const user of users) {

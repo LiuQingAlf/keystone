@@ -57,10 +57,10 @@ class Field {
     });
   }
 
-  // By default we assume that fields support unique.
-  // Fields should override this method if not.
+  // By default we assume that fields do not support unique constraints.
+  // Fields should override this method if they want to support uniqueness.
   get _supportsUnique() {
-    return true;
+    return false;
   }
 
   parseFieldAccess(args) {

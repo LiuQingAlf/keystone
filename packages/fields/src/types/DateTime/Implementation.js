@@ -15,6 +15,10 @@ class _DateTime extends Implementation {
     this.isOrderable = true;
   }
 
+  get _supportsUnique() {
+    return true;
+  }
+
   gqlOutputFields() {
     return [`${this.path}: DateTime`];
   }
